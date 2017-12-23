@@ -1,0 +1,13 @@
+{
+  "ignore": ["node_modules"],
+  "env": {
+    "NODE_ENV": "development",
+    "PORT": 3001,
+    "BABEL_DISABLE_CACHE": 1
+  },
+  "execMap": {
+    "js": "babel-node"
+  },
+  "ext": ".js,.json,.gql",
+  "watch": "./"
+}
