@@ -7,9 +7,11 @@ import { makeExecutableSchema } from 'graphql-tools';
 import depthLimit from 'graphql-depth-limit';
 import path from 'path';
 import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
+import jwt from 'jsonwebtoken';
 
 import { isDevelopment, endpointURL, jwtSecret1, jwtSecret2 } from './config';
 import models from './models';
+import { refreshTokens } from './auth';
 
 const typeDefs = mergeTypes(fileLoader(path.join(__dirname, './schemas')));
 
@@ -27,6 +29,31 @@ const router = new Router();
 
 app.use(koaBody());
 app.use(cors());
+app.use(async (ctx, next) => {
+  const token = ctx.headers['x-token'];
+  if (token) {
+    try {
+      const { user } = jwt.verify(token, jwtSecret1);
+      ctx.user = user;
+    } catch (err) {
+      const refreshToken = ctx.headers['x-refresh-token'];
+      const newTokens = await refreshTokens(
+        token,
+        refreshToken,
+        models,
+        jwtSecret1,
+        jwtSecret2
+      );
+      if (newTokens.token && newTokens.refreshToken) {
+        ctx.set('Access-Control-Expose-Headers', 'x-token, x-refresh-token');
+        ctx.set('x-token', newTokens.token);
+        ctx.set('x-refresh-token', newTokens.refreshToken);
+      }
+      ctx.user = newTokens.user;
+    }
+  }
+  await next();
+});
 
 router.all(
   endpointURL,
@@ -34,9 +61,7 @@ router.all(
     schema,
     context: {
       models,
-      user: {
-        id: 1
-      },
+      user: ctx.user,
       jwtSecret1,
       jwtSecret2
     },
