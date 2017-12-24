@@ -4,7 +4,9 @@ import { port } from './config';
 
 (async () => {
   try {
-    const { config } = await models.sequelize.sync({});
+    const { config } = await models.sequelize.sync({
+      // force: true
+    });
     console.log(
       `Connected to ${config.host}:${config.port}, database: ${config.database}`
     );

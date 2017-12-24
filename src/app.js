@@ -8,7 +8,7 @@ import depthLimit from 'graphql-depth-limit';
 import path from 'path';
 import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
 
-import { isDevelopment, endpointURL } from './config';
+import { isDevelopment, endpointURL, jwtSecret1, jwtSecret2 } from './config';
 import models from './models';
 
 const typeDefs = mergeTypes(fileLoader(path.join(__dirname, './schemas')));
@@ -36,7 +36,9 @@ router.all(
       models,
       user: {
         id: 1
-      }
+      },
+      jwtSecret1,
+      jwtSecret2
     },
     validationRules: [depthLimit(2)],
     debug: false
