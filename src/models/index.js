@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 
 const sequelize = new Sequelize('team', 'root', '', {
   dialect: 'mysql',
+  operatorsAliases: Sequelize.Op,
   define: {
     underscored: true
   }
