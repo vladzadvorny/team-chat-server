@@ -15,7 +15,7 @@ export const createTokens = async (user, secret, secret2) => {
 
   const createRefreshToken = jwt.sign(
     {
-      user: _.pick(user, 'id')
+      user: _.pick(user, ['id'])
     },
     secret2,
     {
