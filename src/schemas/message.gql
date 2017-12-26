@@ -2,7 +2,7 @@ type Message {
   id: Int!
   text: String!
   user: User!
-  createdAt: String!
+  created_at: String!
 }
 
 type Query {

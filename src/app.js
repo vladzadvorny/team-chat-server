@@ -19,7 +19,7 @@ const resolvers = mergeResolvers(
   fileLoader(path.join(__dirname, './resolvers'))
 );
 
-const schema = makeExecutableSchema({
+export const schema = makeExecutableSchema({
   typeDefs,
   resolvers
 });

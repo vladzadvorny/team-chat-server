@@ -1,4 +1,9 @@
-import app from './app';
+import { createServer } from 'http';
+import { execute, subscribe } from 'graphql';
+import { PubSub } from 'graphql-subscriptions';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
+
+import app, { schema } from './app';
 import models from './models';
 import { port } from './config';
 
@@ -14,6 +19,22 @@ import { port } from './config';
     console.error('Unable to connect to database');
     process.exit(1);
   }
-  await app.listen(port);
-  console.log(`Server started on port ${port}`);
+
+  const server = createServer(app.callback());
+
+  server.listen(port, () => {
+    // eslint-disable-next-line no-new
+    new SubscriptionServer(
+      {
+        execute,
+        subscribe,
+        schema
+      },
+      {
+        server,
+        path: '/subscriptions'
+      }
+    );
+    console.log(`Server started on port ${port}`);
+  });
 })();
