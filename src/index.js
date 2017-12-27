@@ -32,10 +32,9 @@ import { refreshTokens } from './auth';
         schema,
         onConnect: async ({ token, refreshToken }, webSocket) => {
           if (token && refreshToken) {
-            let user = null;
             try {
-              const payload = jwt.verify(token, jwtSecret1);
-              user = payload.user;
+              const { user } = jwt.verify(token, jwtSecret1);
+              return { models, user };
             } catch (err) {
               const newTokens = await refreshTokens(
                 token,
@@ -44,24 +43,11 @@ import { refreshTokens } from './auth';
                 jwtSecret1,
                 jwtSecret2
               );
-              user = newTokens.user;
+              return { models, user: newTokens.user };
             }
-            if (!user) {
-              throw new Error('Invalid auth tokens');
-            }
-
-            // const member = await models.Member.findOne({
-            //   where: { teamId: 1, userId: user.id }
-            // });
-
-            // if (!member) {
-            //   throw new Error('Missing auth tokens!');
-            // }
-
-            return true;
           }
 
-          throw new Error('Missing auth tokens!');
+          return { models };
         }
       },
       {
