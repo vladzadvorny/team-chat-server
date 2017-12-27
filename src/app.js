@@ -9,7 +9,13 @@ import path from 'path';
 import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
 import jwt from 'jsonwebtoken';
 
-import { isDevelopment, endpointURL, jwtSecret1, jwtSecret2 } from './config';
+import {
+  isDevelopment,
+  endpointURL,
+  jwtSecret1,
+  jwtSecret2,
+  subscriptionsEndpoint
+} from './config';
 import models from './models';
 import { refreshTokens } from './auth';
 
@@ -62,10 +68,11 @@ router.all(
     context: {
       models,
       user: ctx.user,
+      // user: { id: 1 },
       jwtSecret1,
       jwtSecret2
     },
-    validationRules: [depthLimit(2)],
+    validationRules: [depthLimit(3)],
     debug: false
   }))
 );
@@ -74,7 +81,8 @@ if (isDevelopment) {
   router.get(
     '/graphiql',
     graphiqlKoa({
-      endpointURL
+      endpointURL,
+      subscriptionsEndpoint: `ws://localhost:8081/${subscriptionsEndpoint}`
     })
   );
 }

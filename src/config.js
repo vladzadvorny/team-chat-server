@@ -10,5 +10,6 @@ export const isProduction =
 
 export const port = process.env.PORT;
 export const endpointURL = process.env.ENDPOINT_URL;
+export const subscriptionsEndpoint = process.env.SUBSCRIPTIONS_ENDPOINT_URL;
 export const jwtSecret1 = process.env.JWT_KEY_1;
 export const jwtSecret2 = process.env.JWT_KEY_2;

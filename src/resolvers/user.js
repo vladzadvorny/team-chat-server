@@ -1,11 +1,26 @@
 import formatErrors from '../formatErrors';
 import { tryLogin } from '../auth';
+import requiresAuth from '../permissions';
 
 export default {
+  User: {
+    teams: async (parent, args, { models, user }) => {
+      const res = await models.sequelize.query(
+        'select * from teams as team join members as member on team.id = member.team_id where member.user_id = ?',
+        {
+          replacements: [user.id],
+          model: models.Team
+        }
+      );
+      console.log('dfsdfsdf', res);
+      return res;
+    }
+  },
   Query: {
-    getUser: (parent, { id }, { models }) =>
-      models.User.findOne({ where: { id } }),
-    allUsers: (parent, args, { models }) => models.User.findAll()
+    allUsers: (parent, args, { models }) => models.User.findAll(),
+    me: requiresAuth.createResolver((parent, args, { models, user }) =>
+      models.User.findOne({ where: { id: user.id } })
+    )
   },
   Mutation: {
     login: (parent, { email, password }, { models, jwtSecret1, jwtSecret2 }) =>
