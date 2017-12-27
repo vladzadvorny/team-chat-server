@@ -1,8 +1,14 @@
 {
   "extends": ["airbnb-base", "prettier"],
+  "plugins": ["import"],
   "rules": {
     "no-console": 0,
     "no-underscore-dangle": 0,
     "camelcase": 0
+  },
+  "globals": {
+    "describe": 1,
+    "test": 1,
+    "expect": 1
   }
 }

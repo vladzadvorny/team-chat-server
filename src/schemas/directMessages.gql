@@ -5,6 +5,10 @@ type DirectMessage {
   receiverId: Int!
 }
 
+type Subscription {
+  newDirectMessage(teamId: Int!, userId: Int!): DirectMessage!
+}
+
 type Query {
   directMessages: [DirectMessage!]!
 }
